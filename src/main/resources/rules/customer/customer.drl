@@ -1,23 +1,27 @@
-package rules.customer
-import com.gaosh96.flink.udf.entity.Customer
+package com.gaosh96.flink.udf.entity
 
-rule "R1"
+declare Customer
+    userAge : Integer
+    userLevel : String
+    address : String
+    $res : String
+end
+
+rule "R1" // 规则名称
 salience 1 // 优先级，整型，数值越大优先级越高
 activation-group "customer" // 一个组内只会有一个规则被激活
-//enabled true // 是否生效
 when
     customer: Customer(userAge >= 18 && userLevel in ("L1", "L2", "L3"))
 then
-    customer.setLabel("Adult_LowLevel_OthersCity");
+    customer.set$res("Adult_HighLevel_OtherCity");
 end
 
 
 rule "R2"
 salience 2 // 整形，数值越大优先级越高
 activation-group "customer" // 一个组内只会有一个规则被激活
-//enabled true // 是否生效
 when
     customer: Customer(userAge >= 18 && userLevel in ("L1", "L2", "L3") && address matches ".*(上海|北京|深圳|广州|杭州).*")
 then
-    customer.setLabel("Adult_HighLevel_FirstTierCity");
+    customer.set$res("Adult_HighLevel_FirstTierCity");
 end
